@@ -67,6 +67,8 @@ def patch_hotel(
                 hotel["title"] = title
             elif name:
                 hotel["name"] = name
+            else:
+                return {"status": "Error", "description": "Параметры не указаны"}
             return hotel
     return {"status": "Error", "description": "Параметры не указаны"}
 
