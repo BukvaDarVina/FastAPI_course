@@ -1,7 +1,6 @@
 from fastapi import FastAPI, Query, Body
 import uvicorn
 from fastapi.openapi.docs import (
-    get_redoc_html,
     get_swagger_ui_html,
     get_swagger_ui_oauth2_redirect_html,
 )
@@ -60,7 +59,6 @@ def patch_hotel(
         name: str | None = Body(default=None, embed=True, description="Имя отеля"),
 ):
     global hotels
-
     for hotel in hotels:
         if hotel["id"] == hotel_id:
             if title and name:
@@ -70,7 +68,6 @@ def patch_hotel(
             elif name:
                 hotel["name"] = name
             return hotel
-
     return {"status": "Error", "description": "Параметры не указаны"}
 
 
