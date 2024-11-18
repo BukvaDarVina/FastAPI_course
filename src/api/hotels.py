@@ -29,9 +29,10 @@ async def get_hotels(
 
 @router.delete("/{hotel_id}", summary="Удаление отеля")
 async def delete_hotel(hotel_id: int):
-    global hotels
-    hotels = [hotel for hotel in hotels if hotel["id"] != hotel_id]
-    return {"status": "OK"}
+    async with async_session_maker() as session:
+        await HotelsRepository(session).delete(id=hotel_id)
+        await session.commit()
+        return {"status": "OK"}
 
 
 @router.post("", summary="Добавление отеля")
@@ -48,24 +49,17 @@ async def create_hotel(hotel_data: Hotel = Body(openapi_examples={
 ):
     async with async_session_maker() as session:
         hotel = await HotelsRepository(session).add(hotel_data)
-        # add_hotel_stmt = insert(HotelsORM).values(**hotel_data.model_dump())
-        # # print(add_hotel_stmt.compile(engine, compile_kwargs={"literal_binds": True}))
-        # await session.execute(add_hotel_stmt)
         await session.commit()
 
     return {"status": "OK", "data": hotel}
 
 
 @router.put("/{hotel_id}", summary="Полное обновление данных об отеле")
-def put_hotel(hotel_id: int, hotel_data: Hotel):
-    global hotels
-    for hotel in hotels:
-        if hotel["id"] == hotel_id:
-            if hotel_data.title and hotel_data.name:
-                hotel["title"] = hotel_data.title
-                hotel["name"] = hotel_data.name
-                return hotel
-    return {"status": "Error", "description": "Указаны не все параметры"}
+async def edit_hotel(hotel_id: int, hotel_data: Hotel):
+    async with async_session_maker() as session:
+        await HotelsRepository(session).edit(hotel_data, id=hotel_id)
+        await session.commit()
+    return {"status": "OK"}
 
 
 @router.patch("/{hotel_id}", summary="Частичное обновление данных об отеле")
@@ -77,7 +71,7 @@ def patch_hotel(
     for hotel in hotels:
         if hotel["id"] == hotel_id:
             if hotel_data.title and hotel_data.name:
-                put_hotel(hotel_id=hotel_id, title=hotel_data.title, name=hotel_data.name)
+                edit_hotel(hotel_id=hotel_id, title=hotel_data.title, name=hotel_data.name)
             elif hotel_data.title:
                 hotel["title"] = hotel_data.title
             elif hotel_data.name:
