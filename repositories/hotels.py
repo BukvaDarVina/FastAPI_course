@@ -1,3 +1,4 @@
+from pydantic import ConfigDict
 from sqlalchemy import select, func
 
 from repositories.base import BaseRepository
@@ -7,6 +8,9 @@ from src.schemas.hotels import Hotel
 
 class HotelsRepository(BaseRepository):
     model = HotelsORM
+    schema = Hotel
+
+    model_config = ConfigDict(from_attributes=True)
 
     async def get_all(
             self,
@@ -14,7 +18,7 @@ class HotelsRepository(BaseRepository):
             title,
             limit,
             offset,
-    ):
+    ) -> list[Hotel]:
         query = select(HotelsORM)
         if location:
             query = query.filter(func.lower(HotelsORM.location).contains(location.strip().lower()))
