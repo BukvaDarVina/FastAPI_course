@@ -1,11 +1,8 @@
 from fastapi import Query, APIRouter, Body
 
-from sqlalchemy import insert, select, func
-
 from repositories.hotels import HotelsRepository
 from src.api.dependencies import PaginationDep
-from src.database import async_session_maker, engine
-from src.models.hotels import HotelsORM
+from src.database import async_session_maker
 from src.schemas.hotels import Hotel, HotelPATCH
 
 router = APIRouter(prefix="/hotels", tags=["Отели"])
@@ -32,7 +29,7 @@ async def delete_hotel(hotel_id: int):
     async with async_session_maker() as session:
         await HotelsRepository(session).delete(id=hotel_id)
         await session.commit()
-        return {"status": "OK"}
+    return {"status": "OK"}
 
 
 @router.post("", summary="Добавление отеля")
@@ -63,20 +60,11 @@ async def edit_hotel(hotel_id: int, hotel_data: Hotel):
 
 
 @router.patch("/{hotel_id}", summary="Частичное обновление данных об отеле")
-def patch_hotel(
+async def patch_hotel(
         hotel_id: int,
         hotel_data: HotelPATCH,
 ):
-    global hotels
-    for hotel in hotels:
-        if hotel["id"] == hotel_id:
-            if hotel_data.title and hotel_data.name:
-                edit_hotel(hotel_id=hotel_id, title=hotel_data.title, name=hotel_data.name)
-            elif hotel_data.title:
-                hotel["title"] = hotel_data.title
-            elif hotel_data.name:
-                hotel["name"] = hotel_data.name
-            else:
-                return {"status": "Error", "description": "Параметры не указаны"}
-            return hotel
-    return {"status": "Error", "description": "Параметры не указаны"}
+    async with async_session_maker() as session:
+        await HotelsRepository(session).edit(hotel_data, exclude_unset=True, id=hotel_id)
+        await session.commit()
+    return {"status": "OK"}
