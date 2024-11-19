@@ -1,7 +1,7 @@
 from pydantic import ConfigDict
 from sqlalchemy import select, func
 
-from repositories.base import BaseRepository
+from src.repositories.base import BaseRepository
 from src.models.hotels import HotelsORM
 from src.schemas.hotels import Hotel
 
