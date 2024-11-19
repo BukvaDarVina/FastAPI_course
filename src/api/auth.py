@@ -44,5 +44,12 @@ async def login_user(
         return {"access_token": access_token}
 
 
-# @router.post("/only_auth")
-# async def
+@router.post("/only_auth")
+async def only_auth(
+        request: Request,
+):
+    try:
+        access_token = request.cookies["access_token"]
+        return {"access_token": access_token}
+    except:
+        raise HTTPException(status_code=401, detail="Пользователь не аутентифицирован")
