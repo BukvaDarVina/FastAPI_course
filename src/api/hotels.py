@@ -12,7 +12,7 @@ router = APIRouter(prefix="/hotels", tags=["Отели"])
 async def get_hotels(
         pagination: PaginationDep,
         title: str | None = Query(default=None, description="Название отеля"),
-        location: str | None = Query(default=None, description="Название отеля"),
+        location: str | None = Query(default=None, description="Адрес отеля"),
 ):
     per_page = pagination.per_page or 5
     async with async_session_maker() as session:
@@ -63,7 +63,8 @@ async def patch_hotel(
         hotel_data: HotelPATCH,
 ):
     async with async_session_maker() as session:
-        await HotelsRepository(session).edit(hotel_data, exclude_unset=True, id=hotel_id)
+        await HotelsRepository(session).edit(hotel_data,
+                                             exclude_unset=True, id=hotel_id)
         await session.commit()
     return {"status": "OK"}
 
