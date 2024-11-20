@@ -1,9 +1,9 @@
-from pydantic import ConfigDict, BaseModel
+from pydantic import ConfigDict
 from sqlalchemy import select, func
 
-from src.repositories.base import BaseRepository
 from src.models.rooms import RoomsORM
-from src.schemas.rooms import Room, RoomPATCH
+from src.repositories.base import BaseRepository
+from src.schemas.rooms import Room
 
 
 class RoomsRepository(BaseRepository):
