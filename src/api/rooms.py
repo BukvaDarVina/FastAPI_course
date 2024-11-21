@@ -34,7 +34,7 @@ async def create_room(db: DBDep, hotel_id: int, room_data: RoomAddRequest = Body
 ):
     _room_data = RoomAdd(hotel_id=hotel_id, **room_data.model_dump())
     room = await db.rooms.add(_room_data)
-    await db.session.commit()
+    await db.commit()
 
     return {"status": "OK", "data": room}
 
@@ -43,7 +43,7 @@ async def create_room(db: DBDep, hotel_id: int, room_data: RoomAddRequest = Body
 async def edit_room(db: DBDep, hotel_id: int, room_id: int, room_data: RoomAddRequest):
     _room_data = RoomAdd(hotel_id=hotel_id, **room_data.model_dump())
     await db.rooms.edit(_room_data, id=room_id)
-    await db.session.commit()
+    await db.commit()
     return {"status": "OK"}
 
 
@@ -51,12 +51,12 @@ async def edit_room(db: DBDep, hotel_id: int, room_id: int, room_data: RoomAddRe
 async def patch_room(db: DBDep, hotel_id: int, room_id: int, room_data: RoomPatchRequest):
     _room_data = RoomPatch(hotel_id=hotel_id, **room_data.model_dump(exclude_unset=True))
     await db.rooms.edit(_room_data, exclude_unset=True, hotel_id=hotel_id, id=room_id)
-    await db.session.commit()
+    await db.commit()
     return {"status": "OK"}
 
 
 @router.delete("/{room_id}", summary="Удаление комнаты")
 async def delete_room(db: DBDep, hotel_id: int, room_id: int):
     await db.rooms.delete(hotel_id=hotel_id, id=room_id)
-    await db.session.commit()
+    await db.commit()
     return {"status": "OK"}

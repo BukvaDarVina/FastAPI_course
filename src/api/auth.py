@@ -16,7 +16,7 @@ async def register_user(db: DBDep, data: UserRequestAdd,):
     try:
         new_user_data = UserAdd(email=data.email, hashed_password=hashed_password)
         await db.users.add(new_user_data)
-        await db.session.commit()
+        await db.commit()
         return {"status": "OK"}
     except Exception:
         raise HTTPException(status_code=423, detail="Пользователь с таким email уже зарегистрирован. "
