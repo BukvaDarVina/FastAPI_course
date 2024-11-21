@@ -1,0 +1,15 @@
+from pydantic import ConfigDict
+from sqlalchemy import select, func
+
+from src.models.bookings import BookingsORM
+from src.repositories.base import BaseRepository
+from src.schemas.bookings import Booking
+
+
+class BookingsRepository(BaseRepository):
+    model = BookingsORM
+    schema = Booking
+
+    model_config = ConfigDict(from_attributes=True)
+
+

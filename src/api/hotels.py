@@ -1,8 +1,6 @@
 from fastapi import Query, APIRouter, Body
 
-from src.repositories.hotels import HotelsRepository
 from src.api.dependencies import PaginationDep, DBDep
-from src.database import async_session_maker
 from src.schemas.hotels import HotelPATCH, HotelAdd
 
 router = APIRouter(prefix="/hotels", tags=["Отели"])
@@ -59,7 +57,7 @@ async def patch_hotel(
         hotel_data: HotelPATCH,
         db: DBDep
 ):
-    await db.hotels.edit(hotel_data,exclude_unset=True, id=hotel_id)
+    await db.hotels.edit(hotel_data, exclude_unset=True, id=hotel_id)
     await db.commit()
     return {"status": "OK"}
 
