@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from fastapi import APIRouter, Query
 
 from src.api.dependencies import DBDep, UserIdDep, PaginationDep
@@ -23,7 +25,7 @@ async def get_all_bookings(
 
 
 @router.get("/me", summary="Получение бронирований пользователя")
-async def get_user_bookings(db: DBDep, user_id: UserIdDep):
+async def get_my_bookings(db: DBDep, user_id: UserIdDep):
     bookings = await db.bookings.get_filtered(user_id=user_id)
     return bookings
 
@@ -32,7 +34,12 @@ async def get_user_bookings(db: DBDep, user_id: UserIdDep):
 async def add_booking(db: DBDep, user_id: UserIdDep, booking_data: BookingsAddRequest):
     room = await db.rooms.get_one_or_none(id=booking_data.room_id)
     room_price: int = room.price
-    _booking_data = BookingAdd(user_id=user_id, price=room_price, **booking_data.model_dump())
+    _booking_data = BookingAdd(
+        user_id=user_id,
+        price=room_price,
+        # create_at=datetime(datetime.timestamp(datetime.now())),
+        **booking_data.model_dump()
+    )
     booking = await db.bookings.add(_booking_data)
     await db.commit()
 
