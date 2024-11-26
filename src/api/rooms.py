@@ -3,6 +3,7 @@ from datetime import date
 from fastapi import APIRouter, Body, Query
 
 from src.api.dependencies import DBDep
+from src.schemas.facilities import RoomsFacilitiesAdd
 from src.schemas.rooms import RoomAdd, RoomAddRequest, RoomPatch, RoomPatchRequest
 
 router = APIRouter(prefix="/hotels/{hotel_id}/rooms", tags=["Комнаты"])
@@ -30,17 +31,26 @@ async def create_room(db: DBDep, hotel_id: int, room_data: RoomAddRequest = Body
         "description": "Стандартный номер отеля. Есть кровать, телевизор и душевая кабина",
         "price": "100",
         "quantity": "10",
+        "facilities_ids": [
+            1
+        ],
     }},
     "2": {"summary": "Люкс", "value": {
         "title": "Люкс",
         "description": "Люкс номер отеля. Есть кровать, телевизор, ванная и бар",
         "price": "500",
         "quantity": "5",
+        "facilities_ids": [
+            1, 2
+        ],
     }},
 })
 ):
     _room_data = RoomAdd(hotel_id=hotel_id, **room_data.model_dump())
     room = await db.rooms.add(_room_data)
+    rooms_facilities_data = [RoomsFacilitiesAdd(room_id=room.id, facilities_id=f_id)
+                             for f_id in room_data.facilities_ids]
+    await db.rooms_facilities.add_bulk(rooms_facilities_data)
     await db.commit()
 
     return {"status": "OK", "data": room}
@@ -50,14 +60,18 @@ async def create_room(db: DBDep, hotel_id: int, room_data: RoomAddRequest = Body
 async def edit_room(db: DBDep, hotel_id: int, room_id: int, room_data: RoomAddRequest):
     _room_data = RoomAdd(hotel_id=hotel_id, **room_data.model_dump())
     await db.rooms.edit(_room_data, id=room_id)
+    await db.rooms_facilities.set_room_facilities(room_id=room_id, facilities_ids=room_data.facilities_ids)
     await db.commit()
     return {"status": "OK"}
 
 
 @router.patch("/{room_id}", summary="Частичное обновление данных о комнате")
 async def patch_room(db: DBDep, hotel_id: int, room_id: int, room_data: RoomPatchRequest):
-    _room_data = RoomPatch(hotel_id=hotel_id, **room_data.model_dump(exclude_unset=True))
+    _room_data_dict = room_data.model_dump(exclude_unset=True)
+    _room_data = RoomPatch(hotel_id=hotel_id, **_room_data_dict)
     await db.rooms.edit(_room_data, exclude_unset=True, hotel_id=hotel_id, id=room_id)
+    if "facilities_ids" in _room_data_dict:
+        await db.rooms_facilities.set_room_facilities(room_id=room_id, facilities_ids=_room_data_dict["facilities_ids"])
     await db.commit()
     return {"status": "OK"}
 
