@@ -1,23 +1,18 @@
-from pydantic import ConfigDict
 from sqlalchemy import select, delete, insert
 
 from src.models.facilities import FacilitiesORM, RoomsFacilitiesORM
 from src.repositories.base import BaseRepository
-from src.schemas.facilities import Facilities, RoomsFacilities
+from src.repositories.mappers.mappers import FacilityDataMapper, RoomFacilityDataMapper
 
 
 class FacilitiesRepository(BaseRepository):
     model = FacilitiesORM
-    schema = Facilities
-
-    model_config = ConfigDict(from_attributes=True)
+    mapper = FacilityDataMapper
 
 
 class RoomsFacilitiesRepository(BaseRepository):
     model = RoomsFacilitiesORM
-    schema = RoomsFacilities
-
-    model_config = ConfigDict(from_attributes=True)
+    mapper = RoomFacilityDataMapper
 
     async def set_room_facilities(self, room_id: int, facilities_ids: list[int]) -> None:
         get_current_facilities_ids = (

@@ -3,12 +3,13 @@ from sqlalchemy import select
 
 from src.models.bookings import BookingsORM
 from src.repositories.base import BaseRepository
+from src.repositories.mappers.mappers import BookingDataMapper
 from src.schemas.bookings import Booking
 
 
 class BookingsRepository(BaseRepository):
     model = BookingsORM
-    schema = Booking
+    mapper = BookingDataMapper
 
     model_config = ConfigDict(from_attributes=True)
 
