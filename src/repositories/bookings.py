@@ -1,3 +1,5 @@
+from datetime import date
+
 from pydantic import ConfigDict
 from sqlalchemy import select
 
@@ -34,3 +36,11 @@ class BookingsRepository(BaseRepository):
 
         return [Booking.model_validate(booking, from_attributes=True)
                 for booking in result.scalars().all()]
+
+    async def get_bookings_with_today_checkin(self):
+        query = (
+            select(BookingsORM)
+            .filter(BookingsORM.date_from == date.today())
+        )
+        result = await self.session.execute(query)
+        return [self.mapper.map_to_domain_entity(booking) for booking in result.scalars().all()]
