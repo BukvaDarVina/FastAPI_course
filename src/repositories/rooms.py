@@ -16,30 +16,30 @@ class RoomsRepository(BaseRepository):
 
     model_config = ConfigDict(from_attributes=True)
 
-    async def get_all(
-            self,
-            hotel_id: int,
-            title: str,
-            description: str,
-            price: int,
-            quantity: int,
-    ) -> list[RoomDataMapper]:
-        query = select(RoomsORM).filter_by(hotel_id=hotel_id)
-        if title:
-            query = query.filter(func.lower(RoomsORM.title)
-                                 .contains(title.strip().lower()))
-        if description:
-            query = query.filter(func.lower(RoomsORM.description)
-                                 .contains(description.strip().lower()))
-        if price:
-            query = query.filter_by(price=price)
-        if quantity:
-            query = query.filter_by(quantity=quantity)
-
-        # print(query.compile(engine, compile_kwargs={"literal_binds": True}))
-        result = await self.session.execute(query)
-
-        return [RoomDataMapper.map_to_domain_entity(room) for room in result.scalars().all()]
+    # async def get_all(
+    #         self,
+    #         hotel_id: int,
+    #         title: str,
+    #         description: str,
+    #         price: int,
+    #         quantity: int,
+    # ) -> list[RoomDataMapper]:
+    #     query = select(RoomsORM).filter_by(hotel_id=hotel_id)
+    #     if title:
+    #         query = query.filter(func.lower(RoomsORM.title)
+    #                              .contains(title.strip().lower()))
+    #     if description:
+    #         query = query.filter(func.lower(RoomsORM.description)
+    #                              .contains(description.strip().lower()))
+    #     if price:
+    #         query = query.filter_by(price=price)
+    #     if quantity:
+    #         query = query.filter_by(quantity=quantity)
+    #
+    #     # print(query.compile(engine, compile_kwargs={"literal_binds": True}))
+    #     result = await self.session.execute(query)
+    #
+    #     return [RoomDataMapper.map_to_domain_entity(room) for room in result.scalars().all()]
 
     async def get_filtered_by_time(
             self,
