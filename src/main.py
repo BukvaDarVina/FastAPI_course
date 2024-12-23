@@ -14,6 +14,8 @@ from fastapi_cache.decorator import cache
 import sys
 from pathlib import Path
 
+from src.config import settings
+
 sys.path.append(str(Path(__file__).parent.parent))
 
 from src.api.auth import router as router_auth
@@ -34,6 +36,7 @@ async def lifespan(app: FastAPI):
     yield
     await redis_manager.close()
     # При выключении/перезагрузке приложения
+
 
 app = FastAPI(docs_url=None, redoc_url=None, lifespan=lifespan)
 
