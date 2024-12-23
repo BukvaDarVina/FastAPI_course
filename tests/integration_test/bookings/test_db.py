@@ -1,6 +1,6 @@
 from datetime import date
 
-from src.schemas.bookings import BookingAdd, Booking
+from src.schemas.bookings import BookingAdd
 
 
 async def test_booking_crud(db):
@@ -18,7 +18,7 @@ async def test_booking_crud(db):
     print(f"{new_booking_data=}")
 
     # Получить это бронирование и убедиться, что она есть
-    select_booking_data = await db.bookings.get_one_or_none(user_id=user_id, room_id=room_id)
+    select_booking_data = await db.bookings.get_one_or_none(id=new_booking_data.id)
     print(f"{select_booking_data=}")
 
     assert (
@@ -30,13 +30,13 @@ async def test_booking_crud(db):
     )
 
     # Обновить бронирование (дату завершения)
-    updated_date_to = date(year=2025, month=1, day=10)
+    update_date_to = date(year=2025, month=1, day=10)
     update_price = 200
     update_booking_data = BookingAdd(
         user_id=user_id,
         room_id=room_id,
         date_from=date(year=2024, month=12, day=31),
-        date_to=updated_date_to,
+        date_to=update_date_to,
         price=update_price,
     )
 
@@ -49,7 +49,7 @@ async def test_booking_crud(db):
             & (booking_data.user_id == updated_booking_data.user_id)
             & (booking_data.room_id == updated_booking_data.room_id)
             & (booking_data.date_from == updated_booking_data.date_from)
-            & (updated_date_to == updated_booking_data.date_to)
+            & (update_date_to == updated_booking_data.date_to)
             & (update_price == updated_booking_data.price)
     )
 
