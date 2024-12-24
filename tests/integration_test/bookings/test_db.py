@@ -61,11 +61,3 @@ async def test_booking_crud(db):
     assert not booking
 
     await db.commit()
-
-
-@pytest.fixture(scope="session")
-async def delete_all_bookings(db):
-    await db.bookings.delete()
-    bookings = await db.bookings.get_all()
-    assert not bookings
-
