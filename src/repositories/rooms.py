@@ -1,7 +1,7 @@
 from datetime import date
 
 from pydantic import ConfigDict
-from sqlalchemy import select, func
+from sqlalchemy import select
 from sqlalchemy.orm import joinedload
 
 from src.models.rooms import RoomsORM

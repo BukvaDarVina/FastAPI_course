@@ -1,7 +1,5 @@
 from datetime import date
 
-import pytest
-
 from src.schemas.bookings import BookingAdd
 
 

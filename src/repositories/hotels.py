@@ -3,10 +3,9 @@ from datetime import date
 from pydantic import ConfigDict
 from sqlalchemy import select, func
 
-from src.database import engine
+from src.models.hotels import HotelsORM
 from src.models.rooms import RoomsORM
 from src.repositories.base import BaseRepository
-from src.models.hotels import HotelsORM
 from src.repositories.mappers.mappers import HotelDataMapper
 from src.repositories.utils import rooms_ids_for_booking
 from src.schemas.hotels import Hotel
