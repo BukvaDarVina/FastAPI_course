@@ -1,4 +1,3 @@
-
 async def test_post_facilities(ac):
     facility_title = "Wi-fi"
     response = await ac.post("/facilities", json={"title": facility_title})

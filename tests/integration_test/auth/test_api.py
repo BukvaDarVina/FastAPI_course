@@ -1,27 +1,25 @@
 import pytest
 
 
-@pytest.mark.parametrize("email, password, status_code_1, status_code_2", [
-    ("test1@test1.com", "Pa$$w0rd!", 200, 401),
-    ("test1@test1.com", "Pa$$w0rd!", 423, 401),
-    ("test1@test1", "Pa$$w0rd!", 422, 401),
-    ("test1", "Pa$$w0rd!", 422, 401),
-])
+@pytest.mark.parametrize(
+    "email, password, status_code_1, status_code_2",
+    [
+        ("test1@test1.com", "Pa$$w0rd!", 200, 401),
+        ("test1@test1.com", "Pa$$w0rd!", 423, 401),
+        ("test1@test1", "Pa$$w0rd!", 422, 401),
+        ("test1", "Pa$$w0rd!", 422, 401),
+    ],
+)
 async def test_full_auth_flow(
-        ac,
-        email: str,
-        password: str,
-        status_code_1: int,
-        status_code_2: int,
+    ac,
+    email: str,
+    password: str,
+    status_code_1: int,
+    status_code_2: int,
 ):
-
     # /register
     response_register = await ac.post(
-        "/auth/register",
-        json={
-            "email": email,
-            "password": password
-        }
+        "/auth/register", json={"email": email, "password": password}
     )
     assert response_register.status_code == status_code_1
     if response_register.status_code > 250:
@@ -29,11 +27,7 @@ async def test_full_auth_flow(
 
     # /login
     response_login = await ac.post(
-        "/auth/login",
-        json={
-            "email": email,
-            "password": password
-        }
+        "/auth/login", json={"email": email, "password": password}
     )
     assert response_login.status_code == status_code_1
     assert "access_token" in response_login.json()

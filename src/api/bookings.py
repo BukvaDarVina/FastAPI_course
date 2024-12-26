@@ -13,14 +13,14 @@ async def get_all_bookings(
     db: DBDep,
     pagination: PaginationDep,
     user_id: int | None = Query(default=None, description="ID пользователя"),
-    room_id: int | None = Query(default=None, description="ID отеля")
+    room_id: int | None = Query(default=None, description="ID отеля"),
 ):
     per_page = pagination.per_page or 5
     return await db.bookings.get_all(
         user_id=user_id,
         room_id=room_id,
         limit=per_page,
-        offset=per_page * (pagination.page - 1)
+        offset=per_page * (pagination.page - 1),
     )
 
 
@@ -39,7 +39,7 @@ async def add_booking(db: DBDep, user_id: UserIdDep, booking_data: BookingsAddRe
         user_id=user_id,
         price=room_price,
         # create_at=datetime(datetime.timestamp(datetime.now())),
-        **booking_data.model_dump()
+        **booking_data.model_dump(),
     )
     booking = await db.bookings.add_booking(_booking_data, hotel_id=hotel.id)
     await db.commit()

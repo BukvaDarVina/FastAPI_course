@@ -19,7 +19,7 @@ from src.api.dependencies import get_db
 from src.config import settings
 from src.database import Base, engine_null_pool, async_session_maker_null_pool
 from src.main import app
-from src.models import * # noqa
+from src.models import *  # noqa
 from src.schemas.hotels import HotelAdd
 from src.schemas.rooms import RoomAdd
 from src.utils.db_manager import DBManager
@@ -54,10 +54,10 @@ async def setup_database(check_test_mode):
 
 @pytest.fixture(scope="session", autouse=True)
 async def setup_data_in_base(setup_database):
-    with open('tests/mock_hotels.json', 'r', encoding='utf-8') as file:
+    with open("tests/mock_hotels.json", "r", encoding="utf-8") as file:
         hotels_data = json.load(file)
 
-    with open('tests/mock_rooms.json', 'r', encoding='utf-8') as file:
+    with open("tests/mock_rooms.json", "r", encoding="utf-8") as file:
         rooms_data = json.load(file)
 
     hotels_validated = [HotelAdd.model_validate(hotel) for hotel in hotels_data]
@@ -79,22 +79,14 @@ async def ac() -> AsyncClient:
 @pytest.fixture(scope="session", autouse=True)
 async def register_user(setup_data_in_base, ac):
     await ac.post(
-        "/auth/register",
-        json={
-            "email": "test@test.com",
-            "password": "Pa$$w0rd"
-        }
+        "/auth/register", json={"email": "test@test.com", "password": "Pa$$w0rd"}
     )
 
 
 @pytest.fixture(scope="session")
 async def authenticated_ac(ac, register_user):
     await ac.post(
-        "/auth/login",
-        json={
-            "email": "test@test.com",
-            "password": "Pa$$w0rd"
-        }
+        "/auth/login", json={"email": "test@test.com", "password": "Pa$$w0rd"}
     )
     print(f"{ac.cookies['access_token']=}")
     assert ac.cookies["access_token"]

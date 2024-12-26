@@ -22,11 +22,11 @@ async def test_booking_crud(db):
     print(f"{select_booking_data=}")
 
     assert (
-            (booking_data.user_id == select_booking_data.user_id)
-            & (booking_data.room_id == select_booking_data.room_id)
-            & (booking_data.date_from == select_booking_data.date_from)
-            & (booking_data.date_to == select_booking_data.date_to)
-            & (booking_data.price == select_booking_data.price)
+        (booking_data.user_id == select_booking_data.user_id)
+        & (booking_data.room_id == select_booking_data.room_id)
+        & (booking_data.date_from == select_booking_data.date_from)
+        & (booking_data.date_to == select_booking_data.date_to)
+        & (booking_data.price == select_booking_data.price)
     )
 
     # Обновить бронирование (дату завершения)
@@ -45,12 +45,12 @@ async def test_booking_crud(db):
     print(f"{updated_booking_data=}")
 
     assert (
-            (select_booking_data.id == updated_booking_data.id)
-            & (booking_data.user_id == updated_booking_data.user_id)
-            & (booking_data.room_id == updated_booking_data.room_id)
-            & (booking_data.date_from == updated_booking_data.date_from)
-            & (update_date_to == updated_booking_data.date_to)
-            & (update_price == updated_booking_data.price)
+        (select_booking_data.id == updated_booking_data.id)
+        & (booking_data.user_id == updated_booking_data.user_id)
+        & (booking_data.room_id == updated_booking_data.room_id)
+        & (booking_data.date_from == updated_booking_data.date_from)
+        & (update_date_to == updated_booking_data.date_to)
+        & (update_price == updated_booking_data.price)
     )
 
     # Удалить бронь
