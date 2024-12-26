@@ -20,24 +20,12 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    op.alter_column(
-        "users", "nickname", existing_type=sa.VARCHAR(length=100), nullable=True
-    )
-    op.alter_column(
-        "users", "first_name", existing_type=sa.VARCHAR(length=150), nullable=True
-    )
-    op.alter_column(
-        "users", "last_name", existing_type=sa.VARCHAR(length=150), nullable=True
-    )
+    op.alter_column("users", "nickname", existing_type=sa.VARCHAR(length=100), nullable=True)
+    op.alter_column("users", "first_name", existing_type=sa.VARCHAR(length=150), nullable=True)
+    op.alter_column("users", "last_name", existing_type=sa.VARCHAR(length=150), nullable=True)
 
 
 def downgrade() -> None:
-    op.alter_column(
-        "users", "last_name", existing_type=sa.VARCHAR(length=150), nullable=False
-    )
-    op.alter_column(
-        "users", "first_name", existing_type=sa.VARCHAR(length=150), nullable=False
-    )
-    op.alter_column(
-        "users", "nickname", existing_type=sa.VARCHAR(length=100), nullable=False
-    )
+    op.alter_column("users", "last_name", existing_type=sa.VARCHAR(length=150), nullable=False)
+    op.alter_column("users", "first_name", existing_type=sa.VARCHAR(length=150), nullable=False)
+    op.alter_column("users", "nickname", existing_type=sa.VARCHAR(length=100), nullable=False)

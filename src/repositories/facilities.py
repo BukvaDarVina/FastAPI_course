@@ -14,22 +14,14 @@ class RoomsFacilitiesRepository(BaseRepository):
     model = RoomsFacilitiesORM
     mapper = RoomFacilityDataMapper
 
-    async def set_room_facilities(
-        self, room_id: int, facilities_ids: list[int]
-    ) -> None:
-        get_current_facilities_ids = select(self.model.facilities_id).filter_by(
-            room_id=room_id
-        )
+    async def set_room_facilities(self, room_id: int, facilities_ids: list[int]) -> None:
+        get_current_facilities_ids = select(self.model.facilities_id).filter_by(room_id=room_id)
 
         result = await self.session.execute(get_current_facilities_ids)
         current_facilities_ids: list[int] = result.scalars().all()
 
-        ids_to_delete: list[int] = list(
-            set(current_facilities_ids) - set(facilities_ids)
-        )
-        ids_to_insert: list[int] = list(
-            set(facilities_ids) - set(current_facilities_ids)
-        )
+        ids_to_delete: list[int] = list(set(current_facilities_ids) - set(facilities_ids))
+        ids_to_insert: list[int] = list(set(facilities_ids) - set(current_facilities_ids))
 
         if ids_to_delete:
             delete_m2m_facilities_stmt = delete(self.model).filter(

@@ -26,20 +26,15 @@ class HotelsRepository(BaseRepository):
     ) -> list[Hotel]:
         query = select(HotelsORM)
         if location:
-            query = query.filter(
-                func.lower(HotelsORM.location).contains(location.strip().lower())
-            )
+            query = query.filter(func.lower(HotelsORM.location).contains(location.strip().lower()))
         if title:
-            query = query.filter(
-                func.lower(HotelsORM.title).contains(title.strip().lower())
-            )
+            query = query.filter(func.lower(HotelsORM.title).contains(title.strip().lower()))
         query = query.limit(limit).offset(offset)
         # print(query.compile(engine, compile_kwargs={"literal_binds": True}))
         result = await self.session.execute(query)
 
         return [
-            Hotel.model_validate(hotel, from_attributes=True)
-            for hotel in result.scalars().all()
+            Hotel.model_validate(hotel, from_attributes=True) for hotel in result.scalars().all()
         ]
 
     async def get_filtered_by_time(
@@ -61,17 +56,11 @@ class HotelsRepository(BaseRepository):
 
         query = select(HotelsORM).filter(HotelsORM.id.in_(hotels_ids_to_get))
         if location:
-            query = query.filter(
-                func.lower(HotelsORM.location).contains(location.strip().lower())
-            )
+            query = query.filter(func.lower(HotelsORM.location).contains(location.strip().lower()))
         if title:
-            query = query.filter(
-                func.lower(HotelsORM.title).contains(title.strip().lower())
-            )
+            query = query.filter(func.lower(HotelsORM.title).contains(title.strip().lower()))
         query = query.limit(limit).offset(offset)
         # print(query.compile(engine, compile_kwargs={"literal_binds": True}))
         result = await self.session.execute(query)
 
-        return [
-            self.mapper.map_to_domain_entity(hotel) for hotel in result.scalars().all()
-        ]
+        return [self.mapper.map_to_domain_entity(hotel) for hotel in result.scalars().all()]

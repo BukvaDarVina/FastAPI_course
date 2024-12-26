@@ -13,9 +13,7 @@ router = APIRouter(prefix="/facilities", tags=["Удобства"])
 async def get_all_facilities(db: DBDep, pagination: PaginationDep):
     per_page = pagination.per_page or 5
     print("Go to DB")
-    return await db.facilities.get_all(
-        limit=per_page, offset=per_page * (pagination.page - 1)
-    )
+    return await db.facilities.get_all(limit=per_page, offset=per_page * (pagination.page - 1))
 
 
 @router.post("", summary="Добавление в справочник удобств")
