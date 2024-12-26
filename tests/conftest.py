@@ -1,5 +1,6 @@
 # ruff: noqa: E402
 import json
+from typing import AsyncGenerator
 from unittest import mock
 
 
@@ -37,7 +38,7 @@ async def get_db_null_pool():
 
 
 @pytest.fixture(scope="function")
-async def db() -> DBManager:
+async def db() -> AsyncGenerator[DBManager]:
     async for db in get_db_null_pool():
         yield db
 
@@ -70,7 +71,7 @@ async def setup_data_in_base(setup_database):
 
 
 @pytest.fixture(scope="session")
-async def ac() -> AsyncClient:
+async def ac() -> AsyncGenerator[AsyncClient]:
     async with app.router.lifespan_context(app):
         async with AsyncClient(app=app, base_url="http://test") as ac:
             yield ac
