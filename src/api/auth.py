@@ -17,16 +17,13 @@ async def register_user(
     data: UserRequestAdd,
 ):
     hashed_password = AuthService().hash_password(data.password)
+    new_user_data = UserAdd(email=data.email, hashed_password=hashed_password)
     try:
-        new_user_data = UserAdd(email=data.email, hashed_password=hashed_password)
         await db.users.add(new_user_data)
         await db.commit()
         return {"status": "OK"}
-    except ObjectAlreadyExistException as ex:
-        raise EmailAlreadyExistException(
-            status_code=423,
-            detail=ex.detail,
-        )
+    except ObjectAlreadyExistException:
+        raise HTTPException(status_code=409, detail="Пользователь с такой почтой уже существует",)
 
 
 @router.post("/login", summary="Авторизация пользователя")
