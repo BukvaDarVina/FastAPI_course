@@ -1,8 +1,10 @@
-from typing import Sequence
+from typing import Sequence, Any
 
 from pydantic import BaseModel, ConfigDict
 from sqlalchemy import select, insert, update, delete
+from sqlalchemy.exc import NoResultFound, IntegrityError
 
+from src.exceptions import ObjectNotFoundException, ObjectAlreadyExistException
 from src.repositories.mappers.base import DataMapper
 
 
@@ -23,7 +25,7 @@ class BaseRepository:
     async def get_all(self, *args, **kwargs):
         return await self.get_filtered()
 
-    async def get_one_or_none(self, **filter_by):
+    async def get_one_or_none(self, **filter_by) -> BaseModel | None | Any:
         query = select(self.model).filter_by(**filter_by)
         result = await self.session.execute(query)
         model = result.scalars().one_or_none()
@@ -31,10 +33,22 @@ class BaseRepository:
             return None
         return self.mapper.map_to_domain_entity(model)
 
+    async def get_one(self, **filter_by) -> BaseModel:
+        query = select(self.model).filter_by(**filter_by)
+        result = await self.session.execute(query)
+        try:
+            model = result.scalar_one()
+        except NoResultFound:
+            raise ObjectNotFoundException
+        return self.mapper.map_to_domain_entity(model)
+
     async def add(self, data: BaseModel):
         add_data_stmt = insert(self.model).values(**data.model_dump()).returning(self.model)
-        result = await self.session.execute(add_data_stmt)
-        model = result.scalars().one()
+        try:
+            result = await self.session.execute(add_data_stmt)
+            model = result.scalars().one()
+        except IntegrityError:
+            raise ObjectAlreadyExistException
         return self.mapper.map_to_domain_entity(model)
 
     async def add_bulk(self, data: Sequence[BaseModel]):
