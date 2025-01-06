@@ -1,4 +1,5 @@
 from typing import Sequence, Any
+import logging
 
 from asyncpg.exceptions import UniqueViolationError
 from pydantic import BaseModel, ConfigDict
@@ -50,9 +51,15 @@ class BaseRepository:
             model = result.scalars().one()
             return self.mapper.map_to_domain_entity(model)
         except IntegrityError as ex:
+            logging.error(f"Не удалось добавить данные в БД. "
+                          f"Входные данные={data}. "
+                          f"Тип ошибки:{type(ex.orig.__cause__)=}")
             if isinstance(ex.orig.__cause__, UniqueViolationError):
                 raise ObjectAlreadyExistException from ex
             else:
+                logging.error(f"Незнакомая ошибка. "
+                              f"Входные данные={data}. "
+                              f"Тип ошибки:{type(ex.orig.__cause__)=}")
                 raise ex
 
     async def add_bulk(self, data: Sequence[BaseModel]):

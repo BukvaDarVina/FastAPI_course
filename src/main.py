@@ -10,8 +10,11 @@ from fastapi.openapi.docs import (
 )
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
+import logging
 
 sys.path.append(str(Path(__file__).parent.parent))
+
+logging.basicConfig(level=logging.INFO)
 
 from src.api.auth import router as router_auth
 from src.api.hotels import router as router_hotels
@@ -28,6 +31,7 @@ async def lifespan(app: FastAPI):
     await redis_manager.connect()
 
     FastAPICache.init(RedisBackend(redis_manager.redis), prefix="fastapi-cache")
+    logging.info("FastAPI Cache initialized")
     yield
     await redis_manager.close()
     # При выключении/перезагрузке приложения
