@@ -14,6 +14,14 @@ class ObjectNotFoundException(NabronirovalException):
     detail = "Объект не найден"
 
 
+class RoomNotFoundException(ObjectNotFoundException):
+    detail = "Комната не найдена"
+
+
+class HotelNotFoundException(ObjectNotFoundException):
+    detail = "Отель не найден"
+
+
 class ObjectAlreadyExistException(NabronirovalException):
     detail = "Похожий объект уже существует"
 
@@ -24,6 +32,22 @@ class AllRoomsAreBookedException(NabronirovalException):
 
 class EmailAlreadyExistException(NabronirovalException):
     detail = "Пользователь с такой почтой уже имеется"
+
+
+class IncorrectTokenException(NabronirovalException):
+    detail = "Неверный токен"
+
+
+class EmailNotRegisteredException(NabronirovalException):
+    detail = "Пользователь с такой почтой не зарегистрирован"
+
+
+class IncorrectPasswordException(NabronirovalException):
+    detail = "Пароль неверный"
+
+
+class UserAlreadyExistException(NabronirovalException):
+    detail = "Такой пользователь уже имеется"
 
 
 def check_date_to_after_date_from(date_from: date, date_to: date) -> None:
@@ -47,3 +71,31 @@ class HotelNotFoundHTTPException(NabronirovalHTTPException):
 class RoomNotFoundHTTPException(NabronirovalHTTPException):
     status_code = 404
     detail = "Номер не найден"
+
+
+class AllRoomsAreBookedHTTPException(NabronirovalHTTPException):
+    status_code = 404
+    detail = "Не осталось свободных номеров"
+
+
+class IncorrectTokenHTTPException(NabronirovalHTTPException):
+    status_code = 404
+    detail = "Неверный токен"
+
+
+class EmailAlreadyExistHTTPException(NabronirovalHTTPException):
+    detail = "Пользователь с такой почтой уже имеется"
+
+
+class UserAlreadyExistHTTPException(NabronirovalHTTPException):
+    detail = "Такой пользователь уже существует"
+
+
+class EmailNotRegisteredHTTPException(NabronirovalHTTPException):
+    status_code = 404
+    detail = "Пользователь с такой почтой не зарегистрирован"
+
+
+class IncorrectPasswordHTTPException(NabronirovalHTTPException):
+    status_code = 404
+    detail = "Пароль неверный"
