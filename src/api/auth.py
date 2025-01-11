@@ -33,6 +33,7 @@ async def login_user(db: DBDep, data: UserRequestAdd, response: Response):
         raise EmailNotRegisteredHTTPException
     except IncorrectPasswordException:
         raise IncorrectPasswordHTTPException
+
     response.set_cookie("access_token", access_token)
     return {"access_token": access_token}
 

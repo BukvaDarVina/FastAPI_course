@@ -7,7 +7,7 @@ from passlib.context import CryptContext
 from src.api.dependencies import UserIdDep
 from src.config import settings
 from src.exceptions import ObjectAlreadyExistException, EmailNotRegisteredException, IncorrectPasswordException, \
-    UserAlreadyExistException
+    UserAlreadyExistException, IncorrectTokenException
 from src.schemas.users import UserRequestAdd, UserAdd
 from src.services.base import BaseService
 
@@ -38,12 +38,12 @@ class AuthService(BaseService):
         try:
             return jwt.decode(token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
         except jwt.exceptions.DecodeError:
-            raise HTTPException(status_code=401, detail="Неверный токен")
+            raise IncorrectTokenException
         except jwt.exceptions.ExpiredSignatureError:
-            raise HTTPException(status_code=401, detail="Срок действия токена истек")
+            raise IncorrectTokenException
 
     async def register_user(self, data: UserRequestAdd,):
-        hashed_password = AuthService().hash_password(data.password)
+        hashed_password = self.hash_password(data.password)
         new_user_data = UserAdd(email=data.email, hashed_password=hashed_password)
         try:
             await self.db.users.add(new_user_data)
@@ -55,11 +55,10 @@ class AuthService(BaseService):
         user = await self.db.users.get_user_with_hashed_password(email=data.email)
         if not user:
             raise EmailNotRegisteredException
-        if not AuthService().verify_password(data.password, user.hashed_password):
+        if not self.verify_password(data.password, user.hashed_password):
             raise IncorrectPasswordException
-        access_token = AuthService().create_access_token({"user_id": user.id})
+        access_token = self.create_access_token({"user_id": user.id})
         return access_token
 
     async def get_me(self, user_id: UserIdDep):
-        user = await self.db.users.get_one_or_none(id=user_id)
-        return user
+        return await self.db.users.get_one_or_none(id=user_id)

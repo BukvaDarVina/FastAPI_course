@@ -15,7 +15,7 @@ class ObjectNotFoundException(NabronirovalException):
 
 
 class RoomNotFoundException(ObjectNotFoundException):
-    detail = "Комната не найдена"
+    detail = "Номер не найден"
 
 
 class HotelNotFoundException(ObjectNotFoundException):
@@ -74,7 +74,7 @@ class RoomNotFoundHTTPException(NabronirovalHTTPException):
 
 
 class AllRoomsAreBookedHTTPException(NabronirovalHTTPException):
-    status_code = 404
+    status_code = 409
     detail = "Не осталось свободных номеров"
 
 
@@ -84,6 +84,7 @@ class IncorrectTokenHTTPException(NabronirovalHTTPException):
 
 
 class EmailAlreadyExistHTTPException(NabronirovalHTTPException):
+    status_code = 409
     detail = "Пользователь с такой почтой уже имеется"
 
 
@@ -92,10 +93,15 @@ class UserAlreadyExistHTTPException(NabronirovalHTTPException):
 
 
 class EmailNotRegisteredHTTPException(NabronirovalHTTPException):
-    status_code = 404
+    status_code = 401
     detail = "Пользователь с такой почтой не зарегистрирован"
 
 
 class IncorrectPasswordHTTPException(NabronirovalHTTPException):
-    status_code = 404
+    status_code = 401
+    detail = "Пароль неверный"
+
+
+class NoAccessTokenHTTPException(NabronirovalHTTPException):
+    status_code = 401
     detail = "Пароль неверный"
