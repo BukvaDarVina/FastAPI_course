@@ -30,7 +30,7 @@ async def lifespan(app: FastAPI):
     # При старте приложения
     await redis_manager.connect()
 
-    FastAPICache.init(RedisBackend(redis_manager.redis), prefix="fastapi-cache")
+    FastAPICache.init(RedisBackend(redis_manager._redis), prefix="fastapi-cache")
     logging.info("FastAPI Cache initialized")
     yield
     await redis_manager.close()
@@ -64,4 +64,4 @@ async def swagger_ui_redirect():
 
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", reload=True)

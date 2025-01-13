@@ -38,9 +38,7 @@ def upgrade() -> None:
         ),
         sa.PrimaryKeyConstraint("id"),
     )
-    op.drop_constraint("users_nickname_key", "users", type_="unique")
 
 
 def downgrade() -> None:
-    op.create_unique_constraint("users_nickname_key", "users", ["nickname"])
     op.drop_table("bookings")

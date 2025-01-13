@@ -38,7 +38,7 @@ async def get_db_null_pool():
 
 
 @pytest.fixture(scope="function")
-async def db() -> AsyncGenerator[DBManager]:
+async def db() -> AsyncGenerator[DBManager, None]:
     async for db in get_db_null_pool():
         yield db
 
@@ -71,7 +71,7 @@ async def setup_data_in_base(setup_database):
 
 
 @pytest.fixture(scope="session")
-async def ac() -> AsyncGenerator[AsyncClient]:
+async def ac() -> AsyncGenerator[AsyncClient, None]:
     async with app.router.lifespan_context(app):
         async with AsyncClient(app=app, base_url="http://test") as ac:
             yield ac

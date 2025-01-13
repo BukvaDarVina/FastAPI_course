@@ -1,10 +1,8 @@
 from datetime import datetime, timezone, timedelta
 
 import jwt
-from fastapi import HTTPException
 from passlib.context import CryptContext
 
-from src.api.dependencies import UserIdDep
 from src.config import settings
 from src.exceptions import ObjectAlreadyExistException, EmailNotRegisteredException, IncorrectPasswordException, \
     UserAlreadyExistException, IncorrectTokenException
@@ -60,5 +58,5 @@ class AuthService(BaseService):
         access_token = self.create_access_token({"user_id": user.id})
         return access_token
 
-    async def get_me(self, user_id: UserIdDep):
+    async def get_me(self, user_id: int):
         return await self.db.users.get_one_or_none(id=user_id)

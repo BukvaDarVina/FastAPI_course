@@ -89,6 +89,7 @@ class EmailAlreadyExistHTTPException(NabronirovalHTTPException):
 
 
 class UserAlreadyExistHTTPException(NabronirovalHTTPException):
+    status_code = 423
     detail = "Такой пользователь уже существует"
 
 
